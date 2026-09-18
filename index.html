@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <section class="hero">
+            <div class="tag">MACHINE LEARNING PROJECT</div>
+            <h1>Car Price Predictor</h1>
+            <p>Enter car details and get an estimated resale price using Linear Regression.</p>
+        </section>
+
+        <section class="card">
+            <form method="POST">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="name">Car Name</label>
+                        <input list="car-names" id="name" name="name"
+                               placeholder="e.g. Hyundai Grand i10"
+                               value="{{ form_data.name }}" required>
+                        <datalist id="car-names">
+                            {% for car in car_names %}
+                            <option value="{{ car }}">
+                            {% endfor %}
+                        </datalist>
+                    </div>
+
+                    <div class="field">
+                        <label for="company">Company</label>
+                        <select id="company" name="company" required>
+                            <option value="">Select company</option>
+                            {% for company in companies %}
+                            <option value="{{ company }}" {% if form_data.company == company %}selected{% endif %}>
+                                {{ company }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="year">Manufacturing Year</label>
+                        <input type="number" id="year" name="year"
+                               placeholder="e.g. 2015"
+                               value="{{ form_data.year }}" min="1900" max="2100" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="kms_driven">Kilometers Driven</label>
+                        <input type="number" id="kms_driven" name="kms_driven"
+                               placeholder="e.g. 30000"
+                               value="{{ form_data.kms_driven }}" min="0" step="any" required>
+                    </div>
+
+                    <div class="field full-width">
+                        <label for="fuel_type">Fuel Type</label>
+                        <select id="fuel_type" name="fuel_type" required>
+                            <option value="">Select fuel type</option>
+                            {% for fuel in fuel_types %}
+                            <option value="{{ fuel }}" {% if form_data.fuel_type == fuel %}selected{% endif %}>
+                                {{ fuel }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit">Predict Price <span>→</span></button>
+            </form>
+
+            {% if prediction is not none %}
+            <div class="result success">
+                <div class="result-label">ESTIMATED CAR PRICE</div>
+                <div class="price">₹ {{ "{:,.2f}".format(prediction) }}</div>
+                <p>Estimated by the trained Linear Regression model.</p>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="result error">
+                <strong>Error:</strong> {{ error }}
+            </div>
+            {% endif %}
+        </section>
+
+        <p class="footer-note">This result is an estimate and may differ from actual market prices.</p>
+    </main>
+</body>
+</html>
